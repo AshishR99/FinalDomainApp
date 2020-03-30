@@ -1,16 +1,9 @@
 package net.codejava.entities;
 
-import java.util.Arrays;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonEncoding;
 
 
 @Entity
@@ -19,8 +12,8 @@ public class Userlogin {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int user_id;
-	private String user_email;
+	private int userId;
+	private String userEmail;
 	private String user_name;	
 	private String user_password;
 	private String user_phone;
@@ -29,17 +22,25 @@ public class Userlogin {
 	private String salt_value;
 	private int created_by;
 	
+	
 	public int getUser_id() {
-		return user_id;
+		return userId;
 	}
 	public void setUser_id(int user_id) {
-		this.user_id = user_id;
+		this.userId = user_id;
 	}
-	public String getUser_email() {
-		return user_email;
+
+	public int getUserId() {
+		return userId;
 	}
-	public void setUser_email(String user_email) {
-		this.user_email = user_email;
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	public String getUserEmail() {
+		return userEmail;
+	}
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
 	}
 	public String getUser_name() {
 		return user_name;
@@ -88,15 +89,15 @@ public class Userlogin {
 	}
 	@Override
 	public String toString() {
-		return "Userlogin [user_id=" + user_id + ", user_email=" + user_email + ", user_name=" + user_name
+		return "Userlogin [user_id=" + userId + ", userEmail=" + userEmail + ", user_name=" + user_name
 				+ ", user_password=" + user_password + ", user_phone=" + user_phone + ", fk_role_id=" + fk_role_id
 				+ ", fk_domain_id=" + fk_domain_id + ", salt_value=" + salt_value + ", created_by=" + created_by + "]";
 	}
-	public Userlogin(int user_id, String user_email, String user_name, String user_password, String user_phone,
+	public Userlogin(int user_id, String userEmail, String user_name, String user_password, String user_phone,
 			int fk_role_id, String fk_domain_id, String salt_value, int created_by) {
 		super();
-		this.user_id = user_id;
-		this.user_email = user_email;
+		this.userId = user_id;
+		this.userEmail = userEmail;
 		this.user_name = user_name;
 		this.user_password = user_password;
 		this.user_phone = user_phone;

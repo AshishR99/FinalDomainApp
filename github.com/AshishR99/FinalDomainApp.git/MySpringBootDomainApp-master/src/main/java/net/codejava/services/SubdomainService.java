@@ -9,12 +9,15 @@ import org.springframework.stereotype.Service;
 
 import net.codejava.entities.Domain;
 import net.codejava.entities.Subdomain;
-import net.codejava.payload.DomainSubdomainPayload;
+import net.codejava.payload.DomainSubdomainPayload		;
 import net.codejava.repositories.DomainSubdomainRepository;
 import net.codejava.repositories.SubdomainRepository;
 
 @Service
+//@Transactional(dontRollbackOn = RuntimeException.class)
+
 @Transactional
+
 public class SubdomainService {
 
 	

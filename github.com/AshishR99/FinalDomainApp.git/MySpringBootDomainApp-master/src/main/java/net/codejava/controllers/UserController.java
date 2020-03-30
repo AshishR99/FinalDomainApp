@@ -1,36 +1,30 @@
 package net.codejava.controllers;
 
-import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import net.codejava.entities.Domain;
-import net.codejava.entities.Role;
+import net.codejava.entities.UpdatePassword;
 import net.codejava.entities.UserActivity;
 import net.codejava.entities.Userlogin;
+import net.codejava.payload.ForgetPassword;
+import net.codejava.payload.ForgotStatus;
+import net.codejava.payload.LoginRequest;
+import net.codejava.payload.SignUpPayload;
 import net.codejava.payload.UserloginRolePayload;
 import net.codejava.payload.UserloginUserActivityPayload;
 import net.codejava.services.ContentService;
@@ -40,6 +34,7 @@ import net.codejava.services.UserloginService;
 
 @RestController
 @CrossOrigin("*")
+
 public class UserController {
 
 	boolean status = false;
@@ -72,13 +67,13 @@ public class UserController {
 	{
 		Map<String, Object> data = new HashMap<String,Object>();
 		
-		String user_email = userlogin.getUser_email();
+		String userEmail = userlogin.getUserEmail();
 		String user_pwd = userlogin.getUser_password();
-		System.out.println("login details of User :"+user_email+","+user_pwd);
+		System.out.println("login details of User :" +userEmail+ "," +user_pwd);
 
 		try
 		{
-			userlogin = userloginService.checkUserLoginDetails(user_email, user_pwd);
+			userlogin = userloginService.checkUserLoginDetails(userEmail, user_pwd);
 			if(userlogin.getUser_id()<=0)
 			{
 				userlogin = new Userlogin();
@@ -112,7 +107,7 @@ public class UserController {
 					else
 					{
 						status = false;
-						statusMessage = "User Activity not yet saved...plz try again later!!!";
+						statusMessage = "User Activity not yet saved...please try again later!!!";
 					
 						data.put("status", status);
 						data.put("statusMessage", statusMessage);
@@ -178,17 +173,72 @@ public class UserController {
 		return new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
 	}
 
+	
+	@RequestMapping(value = "/api/users/save_user", method = RequestMethod.POST)
+	public ResponseEntity<?> saveUser(@RequestBody SignUpPayload signUpPayload) 
+	{
+		Map<String, Object> data = new HashMap<String,Object>();
+		
 
+		
+		if(signUpPayload.getFk_role_id()==1)
+		{
+			signUpPayload.setFk_domain_id("NA");
+
+		}
+		
+		//Userlogin details saving in Userlogin Table
+		
+		status = userloginService.save(signUpPayload);
+		if(status)
+		{
+			
+			//System.out.println("Checking userlogin details from POJO:"+userlogin);
+			int user_id = signUpPayload.getUserId();
+			System.out.println("user_id : "+user_id);
+			
+			status = true;
+			statusMessage = "User Details Saved Successfully!!!";
+						
+			data.put("userlogin", signUpPayload);
+			data.put("status", status);
+			data.put("statusMessage", statusMessage);
+			
+		}
+
+		else
+		{
+			signUpPayload = new SignUpPayload();
+			status = false;
+			statusMessage = "Duplicate User/Connection problem...please try again later!!!";
+			
+			data.put("userlogin", signUpPayload);
+			data.put("status", status);
+			data.put("statusMessage", statusMessage);
+		}
+
+		
+//		return mav;
+		return new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
+	}
+	
+	
+	
+	
+	
 	// Save User With Login Time By Admin/CC/Learner details
+/*	
 	@RequestMapping(value = "/api/users/save_user", method = RequestMethod.POST)
 	public ResponseEntity<?> saveUser(@RequestBody Userlogin userlogin) 
 	{
 		Map<String, Object> data = new HashMap<String,Object>();
 		
 		//System.out.println("Checking user details from POJO:"+user);
+		
 		System.out.println("Checking userlogin details from POJO:"+userlogin);
 		
 		//Setting Mapped Domain as "NA" for the admin
+		
 		if(userlogin.getFk_role_id()==1)
 		{
 			userlogin.setFk_domain_id("NA");
@@ -196,6 +246,7 @@ public class UserController {
 		}
 		
 		//Userlogin details saving in Userlogin Table
+		
 		status = userloginService.save(userlogin);
 		if(status)
 		{
@@ -229,15 +280,17 @@ public class UserController {
 		return new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
 	}
 
-	
+*/	
 	
 	//Update User Details
+	
 	@RequestMapping(value = "/api/users/update_user",method = RequestMethod.PUT)
 	public ResponseEntity<?> showEditUserPage(@RequestBody Userlogin userlogin) 
 	{
 		Map<String, Object> data = new HashMap<String,Object>();
 		
 		//System.out.println("Checking user details from POJO:"+user);
+		
 		System.out.println("Checking userlogin details from POJO for updation:"+userlogin);
 		
 		
@@ -263,7 +316,7 @@ public class UserController {
 		{
 			userlogin = new Userlogin();
 			status = false;
-			statusMessage = "User not updated...plz try again later!!!";
+			statusMessage = "User not updated...please try again later!!!";
 			
 			data.put("userlogin", userlogin);
 			data.put("status", status);
@@ -278,7 +331,7 @@ public class UserController {
 	
 
 	//Calculate User Activity Details
-		@RequestMapping(value = "/api/users/logout_user/{user_id}",method = RequestMethod.GET)
+		@RequestMapping(value = "/api/users/logout_user/{user_id}", method = RequestMethod.GET)
 		public ResponseEntity<?> calculateUserActivityTimeByLoggingOut(@PathVariable(name = "user_id") int user_id)
 		{
 			Map<String, Object> data = new HashMap<String,Object>();
@@ -424,7 +477,7 @@ public class UserController {
 		if(userlogin==null||userlogin.getUser_id()<=0)
 		{
 			status = false;
-			statusMessage = "Something went wrong...user details cant be fetched!!!";
+			statusMessage = "Something went wrong...user details can't be fetched!!!";
 			
 //			mav.addObject("status", status);
 //			mav.addObject("statusMessage",statusMessage);	
@@ -476,7 +529,7 @@ public class UserController {
 					{
 						userloginService.delete(user_id);
 						status = true;
-						statusMessage = "This ContentCreator deleted successfully!!!";
+						statusMessage = "This Content Creator deleted successfully!!!";
 
 //						mav.addObject("status", status);
 //						mav.addObject("statusMessage",statusMessage);
@@ -487,7 +540,7 @@ public class UserController {
 					else
 					{
 						status = false;
-						statusMessage = "This content creator has uploaded contents....plz delete contents first to delete this user!!!";
+						statusMessage = "This content creator has uploaded contents....please delete contents first to delete this user!!!";
 
 //						mav.addObject("status", status);
 //						mav.addObject("statusMessage",statusMessage);
@@ -515,7 +568,7 @@ public class UserController {
 			catch(Exception ex)
 			{
 				status = false;
-				statusMessage = "Something went wrong....plz try again later!!!";
+				statusMessage = "Something went wrong....please try again later!!!";
 				
 //				mav.addObject("status", status);
 //				mav.addObject("statusMessage",statusMessage);
@@ -538,7 +591,7 @@ public class UserController {
 	public ResponseEntity<?> getDomainDetailsByUserId(@PathVariable(name = "user_id") int user_id)
 	{
 		//	userlogin.setUser_id(6);
-		System.out.println("User_id"+user_id);
+		//System.out.println("User_id"+user_id);
 		String domain_tags = "";
 		String domain_name = "";
 		Domain domain = new Domain();
@@ -566,45 +619,90 @@ public class UserController {
 				data.put("statusMessage", statusMessage);
 			}
 
+//			else if(userlogin.getFk_role_id()==2)
+//			{
+//				// Converting string to integer
+//				int domain_id = Integer.parseInt(userlogin.getFk_domain_id());
+//				// Get domain class object using domian_id
+//				domain = domainService.get(domain_id);
+//				if(domain.getStatus().equals("ACTIVE"))
+//				{
+//					//Setting Status,statusMessage 
+//					status = true;
+//					statusMessage = "You have already been assigned "+domain_name+" Domain";
+//					
+//					//Adding to modelandview object
+////					mav.addObject("domain",domain);
+////					mav.addObject("status", status);
+////					mav.addObject("statusMessage",statusMessage);
+//					
+//					data.put("domain", domain);
+//					data.put("status", status);
+//					data.put("statusMessage", statusMessage);
+//				}
+//				
+//				else if(domain.getStatus().equals("INACTIVE"))
+//				{
+//					//Setting Status,statusMessage 
+//					status = true;
+//					statusMessage = "Assigned domain "+domain_name+"is kept inactivated... ";
+//					
+//					//Adding to modelandview object
+////					mav.addObject("domain",domain);
+////					mav.addObject("status", status);
+////					mav.addObject("statusMessage",statusMessage);
+//					
+//					
+//					data.put("domain", domain);
+//					data.put("status", status);
+//					data.put("statusMessage", statusMessage);
+//				}
+			
+			
+			
+			//Changed By me
 			else if(userlogin.getFk_role_id()==2)
 			{
-				// Converting string to integer
-				int domain_id = Integer.parseInt(userlogin.getFk_domain_id());
-				// Get domain class object using domian_id
-				domain = domainService.get(domain_id);
-				if(domain.getStatus().equals("ACTIVE"))
-				{
-					//Setting Status,statusMessage 
-					status = true;
-					statusMessage = "You have already been assigned "+domain_name+" Domain";
-					
-					//Adding to modelandview object
-//					mav.addObject("domain",domain);
-//					mav.addObject("status", status);
-//					mav.addObject("statusMessage",statusMessage);
-					
-					data.put("domain", domain);
-					data.put("status", status);
-					data.put("statusMessage", statusMessage);
-				}
+				String[] domain_ids = userlogin.getFk_domain_id().split(",");
+				List<Domain> domainList = new ArrayList<Domain>();
 				
-				else if(domain.getStatus().equals("INACTIVE"))
+				for(int i=0;i<domain_ids.length;i++)
 				{
-					//Setting Status,statusMessage 
-					status = true;
-					statusMessage = "Assigned domain "+domain_name+"is kept inactivated... ";
-					
-					//Adding to modelandview object
-//					mav.addObject("domain",domain);
-//					mav.addObject("status", status);
-//					mav.addObject("statusMessage",statusMessage);
-					
-					
-					data.put("domain", domain);
-					data.put("status", status);
-					data.put("statusMessage", statusMessage);
+
+
+					int domain_id = Integer.parseInt(domain_ids[i]);
+					domain = domainService.get(domain_id);
+					if(domain.getStatus().equals("ACTIVE"))
+					{
+						domainList.add(domain);
+						status = true;
+						statusMessage = "You have already been assigned "+domain_name+" Domain";
+												
+						data.put("status", status);
+						data.put("statusMessage", statusMessage);
+					}
+
+					else if(domain.getStatus().equals("INACTIVE"))
+					{
+						//Setting Status,statusMessage 
+						status = true;
+						statusMessage = "Assigned domain "+domain_name+"is kept inactivated... ";
+						
+						//Adding to modelandview object
+//						mav.addObject("domain",domain);
+//						mav.addObject("status", status);
+//						mav.addObject("statusMessage",statusMessage);
+						
+						
+						data.put("domain", domain);
+						data.put("status", status);
+						data.put("statusMessage", statusMessage);
+						
+						
+					}
 				}
-				
+
+				data.put("domainList", domainList);
 			}
 
 			else if(userlogin.getFk_role_id()==3)
@@ -657,7 +755,7 @@ public class UserController {
 
 		catch (Exception e) {
 			Userlogin userlogin = new Userlogin();
-			statusMessage = "Something went wrong...no user found!!!";
+			statusMessage = "No user found!!!";
 			status = false;
 			//domain_tags = "Tags unavailable!!!";
 
@@ -677,6 +775,72 @@ public class UserController {
 		return new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
 	}
 	
-		
+
+	//*************************************************************************************
+	//_____________________________________________________________________________________
+
+		/* PASSWORD INTEGRATION DATE:03/03/2020 */	
 	
-}
+	
+	@PostMapping("/api/forgotPassword")
+	public ResponseEntity<?> forgotPassword(@RequestBody LoginRequest loginRequest){
+		boolean isExists=userloginService.checkUserEmail(loginRequest.getUsernameOrEmail());
+		ForgotStatus forgetpw =null;
+		if(!isExists){
+			
+			forgetpw = new ForgotStatus(Boolean.FALSE,loginRequest.getUsernameOrEmail()+" does not exists.. Kindly Check once properly");
+			return ResponseEntity.ok(forgetpw);
+			
+			//return ResponseEntity.ok(loginRequest.getUsernameOrEmail()+" does not exists");
+		}
+		else {
+			boolean isTrue=userloginService.forgotPassword(loginRequest.getUsernameOrEmail());
+			if(isTrue) {
+				 forgetpw = new ForgotStatus(Boolean.TRUE,"OTP sent to registered emailId");
+				return ResponseEntity.ok(forgetpw);
+			}
+		}
+		
+		forgetpw = new ForgotStatus(Boolean.FALSE,"Failed to send the email");
+		
+		return ResponseEntity.ok(forgetpw);	
+		
+		
+	}
+
+	@PostMapping("/api/updatePassword")
+	public ResponseEntity<?> updatePassword(@RequestBody ForgetPassword password){
+		return ResponseEntity.ok(userloginService.updatePassword(password));	
+	}
+	
+	
+	@PostMapping("/api/resetPassword")
+	public ResponseEntity<?> resetPassword(@RequestBody UpdatePassword password){
+		
+		
+		
+		ForgotStatus status=new ForgotStatus();
+		
+		if(password.getPassword().equals(password.getConfPassword())) {
+			int i=userloginService.resetPassword(password);
+			
+			if(i>=0) {
+				status.setStatus(true);
+                status.setStatusMessage("password updated successfully");
+//			}else {
+//				status.setStatus(true);
+////				status.setMessage("password not updated ");
+//				status.setMessage("password updated successfully");
+		}
+		}else {
+			status.setStatus(false);
+			status.setStatusMessage("password and confirm password not matached Please check and Type again");
+		}
+		//String jsonstatus="{"+"status"+":"+status+"}";
+		return ResponseEntity.ok(status);	
+	}
+	
+	
+}	
+	
+

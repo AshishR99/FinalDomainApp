@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +39,7 @@ import net.codejava.entities.Content;
 import net.codejava.entities.Domain;
 import net.codejava.entities.Userlogin;
 import net.codejava.payload.ContentUserloginSubdomainDomainPayload;
+import net.codejava.payload.UserloginRolePayload;
 import net.codejava.services.ContentService;
 import net.codejava.services.DomainService;
 import net.codejava.services.UserloginService;
@@ -268,7 +270,7 @@ public class ContentController {
 		catch(Exception ex)
 		{
 			status = false;
-			statusMessage = "Something went wrong, please try again later!!!";
+			statusMessage = "Something went wrong, No contents for this id!!!";
 
 //			mav.addObject("status", status);
 //			mav.addObject("statusMessage", statusMessage);
@@ -324,7 +326,7 @@ public class ContentController {
 		catch(Exception ex)
 		{
 			status = false;
-			statusMessage = "Something went wrong, please try again later!!!";
+			statusMessage = "Something went wrong, No content For this id!!!";
 
 //			mav.addObject("status", status);
 //			mav.addObject("statusMessage", statusMessage);
@@ -619,6 +621,33 @@ public class ContentController {
 		}
 		
 		
+		
+		//Changed by me
+		// Get All Contents
+		@GetMapping("/api/content/getAllContents")
+		public ResponseEntity<?> getAllContents()
+		{
+			Map<String, Object> data = new HashMap<String,Object>();
+			List<ContentUserloginSubdomainDomainPayload> listOfContents = contentService.findAllContents();
+			if(!listOfContents.isEmpty())
+			{
+				status = true;
+				statusMessage = "Retrieving Contents.....!!!";
+			}
+			else 
+			{
+				status = false;
+				statusMessage = "List of Content is empty!!!";
+
+			}
+			
+			data.put("listOfContents", listOfContents);
+			data.put("status", status);
+			data.put("statusMessage", statusMessage);
+
+			return new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
+		}
+	
 	
 
 	 

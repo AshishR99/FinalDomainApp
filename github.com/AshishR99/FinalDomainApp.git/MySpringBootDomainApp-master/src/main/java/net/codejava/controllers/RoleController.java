@@ -138,9 +138,9 @@ public class RoleController {
 		boolean isDuplicateRoleExists = checkDuplicateRoleEntry(listOfRoles,role_desc);
 		if(isDuplicateRoleExists)
 		{
-			System.out.println("This Role is already exists ..... plz enter any other role");
+			System.out.println("This Role is already exists ..... please enter any other role");
 			status = false;
-			statusMessage = "This role is already exists ..... plz enter any other role";
+			statusMessage = "This role is already exists ..... please enter any other role";
 
 			
 			data.put("role", role);
@@ -166,7 +166,7 @@ public class RoleController {
 			else
 			{
 				status = false;
-				statusMessage = "Something went wrong...plz try again later!!!";
+				statusMessage = "Something went wrong...please try again later!!!";
 
 				
 				data.put("role", role);
@@ -196,9 +196,9 @@ public class RoleController {
 		boolean isDuplicateRoleExists = checkDuplicateRoleEntry(listOfRoles,role_desc);
 		if(isDuplicateRoleExists)
 		{
-			System.out.println("This Role is already exists for other id..... plz enter any other role");
+			System.out.println("This Role is already exists for other id.. please enter any other role");
 			status = false;
-			statusMessage = "This role is already exists for other id...... plz enter any other role";
+			statusMessage = "This role is already exists for other id.. please enter any other role";
 
 //			mav.addObject("role", role);
 //			mav.addObject("status", status);
@@ -230,7 +230,7 @@ public class RoleController {
 			else
 			{
 		//		status = false;
-				statusMessage = "Role not updated...Something went wrong...plz try again later!!!";
+				statusMessage = "Role not updated...Something went wrong..please try again later!!!";
 
 //				mav.addObject("role", role);
 //				mav.addObject("status",status);

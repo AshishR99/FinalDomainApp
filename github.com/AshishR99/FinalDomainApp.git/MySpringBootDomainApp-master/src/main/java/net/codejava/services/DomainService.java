@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.codejava.entities.Domain;
-import net.codejava.entities.Subdomain;
 import net.codejava.repositories.DomainRepository;
-import net.codejava.repositories.SubdomainRepository;
 
 
 @Service
@@ -21,19 +19,28 @@ public class DomainService {
 	@Autowired
     private DomainRepository domainRepo;
 	
+	public Boolean isExistsDomain(String domainName) {
+		return domainRepo.existsByname(domainName);
+	}
 	
+	public Boolean isExistsTag(String tags) {
+		return domainRepo.existsBytags(tags);
+	}
      
     public List<Domain> listAll() {
         return domainRepo.findAll();
     }
+    
+    
      
     public boolean save(Domain domain) {
     	
-    //	domain = domainRepo.save(domain);
+   	domain = domainRepo.save(domain);
     	
     	boolean status = false;
     	try
     	{
+    		System.out.println("------------------ domain tag is "+domain.getTags());
     		domainRepo.save(domain);
     		status = true;
     		
@@ -79,29 +86,30 @@ public class DomainService {
     }
     
     
-    /* 
-    @Transactional
-    public void addSubdomain(Domain domain)
-    {
-    	
-    	List<Domain> list = domainRepo.findAll();
-    	for(int i=0;i<list.size();i++)
-    	{
-    		Domain domainObj = (Domain)list.get(i);
-    		int domain_id = domainObj.getId();
-    		String domain_name= domainObj.getName();
-    		//System.out.println("domain id:"+domain_id+"domain name:"+domain_name);
-    	}
-    	
-    	
-    	
-    	
-    	for(int i=0;i<list.size();i++)
-    	{
-    		Domain domainObj = (Domain)list.get(i);
-    		int domain_id = domainObj.getId();
-    		String domain_name= domainObj.getName();
-    		System.out.println("domain id:"+domain_id+"domain name:"+domain_name);
-    	}
-    }*/
+    
+//    @Transactional(dontRollbackOn = RuntimeException.class)
+//    public void addSubdomain(Domain domain)
+//    {
+//    	
+//    	List<Domain> list = domainRepo.findAll();
+//    	for(int i=0;i<list.size();i++)
+//    	{
+//    		Domain domainObj = (Domain)list.get(i);
+//    		int domain_id = domainObj.getId();
+//    		String domain_name= domainObj.getName();
+//    		//System.out.println("domain id:"+domain_id+"domain name:"+domain_name);
+//    	}
+//    	
+//    	
+//    	
+//    	
+//    	for(int i=0;i<list.size();i++)
+//    	{
+//    		Domain domainObj = (Domain)list.get(i);
+//    		int domain_id = domainObj.getId();
+//    		String domain_name= domainObj.getName();
+//    		System.out.println("domain id:"+domain_id+"domain name:"+domain_name);
+//    	
+//    	}
+//    }
 }

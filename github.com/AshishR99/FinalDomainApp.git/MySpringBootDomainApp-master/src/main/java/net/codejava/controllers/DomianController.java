@@ -1,33 +1,22 @@
 package net.codejava.controllers;
 
-import org.jboss.logging.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import java.security.DomainCombiner;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import net.codejava.entities.Domain;
-import net.codejava.entities.Role;
-import net.codejava.entities.Subdomain;
 import net.codejava.entities.Userlogin;
 import net.codejava.services.DomainService;
 import net.codejava.services.SubdomainService;
@@ -38,7 +27,7 @@ import net.codejava.services.UserloginService;
 @CrossOrigin("*")
 public class DomianController {
 
-
+	//Logger log= Logger.getLogger("DomianController.class");
 	boolean status = false;
 	String statusMessage = "";
 
@@ -121,7 +110,7 @@ public class DomianController {
 		catch(Exception ex)
 		{
 			status = false;
-			statusMessage = "List of Domains can't be fetched...something went wrong!!!";
+			statusMessage = "List of Domains can't be fetched..";
 
 			data.put("status", status);
 			data.put("statusMessage", statusMessage);
@@ -142,16 +131,16 @@ public class DomianController {
 		//		ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
 		String domain_tags = domain.getTags();
 		String domain_name = domain.getName();
-		System.out.println("Domain Name & tags"+domain_name+domain_tags);
+		//System.out.println("Domain Name & tags"+domain_name+domain_tags);
 
 		//Getting already stored domain lists
 		List<Domain> listOfDomains = domainService.listAll();
 
-		//Checvking Duplicate Domian Name entry
+		//Checking Duplicate Domian Name entry
 		boolean isDuplicateDomainExists = checkDuplicateDomainEntry(listOfDomains,domain_name);
 		if(isDuplicateDomainExists)
 		{
-			System.out.println("This domain is already exists ..... Please enter any other domain");
+			//log.info("This domain is already exists ..... Please enter any other domain");
 			status = false;
 			statusMessage = "This domain is already exists ..... Please enter any other domain";
 
@@ -212,83 +201,254 @@ public class DomianController {
 		return new ResponseEntity<Map<String, Object>>(data,HttpStatus.OK);
 
 	}
+	
+	
+	
+//	// Update Domain origin
+	
+	
+//		@RequestMapping(value = "api/domain/update_domain",method = RequestMethod.PATCH)
+//		public ResponseEntity<?> updateDomain(@RequestBody Domain domain)
+//		{
+//			//		ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
+//			Map<String, Object> data = new HashMap<String,Object>();
+//
+//			System.out.println("Domain details"+domain);
+//			String domain_name = domain.getName();
+//
+//
+//			System.out.println("Domain Name type"+domain_name);
+//			List<Domain> listOfDomains = domainService.listAll();
+//			boolean isDuplicateDomainExists = checkDuplicateDomainEntry(listOfDomains,domain_name);
+//			if(isDuplicateDomainExists)
+//			{
+//				System.out.println("This domain is already exists for other id ..... Please enter any other domain");
+//				status = false;
+//				statusMessage = "This domain is already exists for other id..... Please enter any other domain";
+//
+//				//			mav.addObject("domain", domain);
+//				//			mav.addObject("status",status);
+//				//			mav.addObject("statusMessage", statusMessage);
+//
+//				data.put("domain", domain);
+//				data.put("status", status);
+//				data.put("statusMessage", statusMessage);
+//
+//
+//			}
+//
+//			else
+//			{
+//
+//				//	boolean status = false;
+//
+//				System.out.println("New Domain name:"+domain.getName());
+//				Domain domainobj = domainService.get(domain.getId());
+//				domain.setTags(domainobj.getTags());
+//				domain.setStatus(domainobj.getStatus());
+//				status = domainService.save(domain);
+//
+//				if(status)
+//				{
+//					status = true;
+//					statusMessage = "Domain is updated successfully!!!";
+//
+//					//				mav.addObject("domain", domain);
+//					//				mav.addObject("status",status);
+//					//				mav.addObject("statusMessage", statusMessage);
+//
+//					data.put("domain", domain);
+//					data.put("status", status);
+//					data.put("statusMessage", statusMessage);
+//				}
+//
+//				else
+//				{
+//					status = false;
+//					statusMessage = "Something went wrong.... Please try again later!!!";
+//
+//					//				mav.addObject("domain", domain);
+//					//				mav.addObject("status",status);
+//					//				mav.addObject("statusMessage", statusMessage);
+//
+//					data.put("domain", domain);
+//					data.put("status", status);
+//					data.put("statusMessage", statusMessage);
+//				}
+//
+//
+//			}
+//			//		return mav;
+//			return new ResponseEntity<Map<String, Object>>(data,HttpStatus.OK);
+//		}
 
-
-	// Update Domain
+	// Update Domain change by Ashish
 	@RequestMapping(value = "api/domain/update_domain",method = RequestMethod.PATCH)
 	public ResponseEntity<?> updateDomain(@RequestBody Domain domain)
 	{
+		//System.out.println("---- I am here---");
 		//		ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
 		Map<String, Object> data = new HashMap<String,Object>();
 
-		System.out.println("Domain details"+domain);
+		//System.out.println("Domain details"+domain);
 		String domain_name = domain.getName();
+		//log.debug("------- domain isexists: "+domainService.isExistsDomain(domain.getName()));
+		//log.info("-------- Tage isExists: "+domainService.isExistsTag(domain.getTags()));
+		//		System.out.println("Domain Name type"+domain_name);
+		//		List<Domain> listOfDomains = domainService.listAll();
+		//		boolean isDuplicateDomainExists = checkDuplicateDomainEntry(listOfDomains,domain_name);
+		//		if(isDuplicateDomainExists)
+		//		{
+		//			System.out.println("------------>>>This domain is already exists for other id ..... Please enter any other domain");
+		//			status = false;
+		//			statusMessage = "This domain is already exists for other id..... Please enter any other domain";
+		//
+		//			//			mav.addObject("domain", domain);
+		//			//			mav.addObject("status",status);
+		//			//			mav.addObject("statusMessage", statusMessage);
+		//
+		//			data.put("domain", domain);
+		//			data.put("status", status);
+		//			data.put("statusMessage", statusMessage);
+		//
+		//
+		//		}
+		//	
+		//		else
 
+		if(domainService.isExistsDomain(domain.getName().trim())&& (!domainService.isExistsTag(domain.getTags()))){
 
-		System.out.println("Domain Name type"+domain_name);
-		List<Domain> listOfDomains = domainService.listAll();
-		boolean isDuplicateDomainExists = checkDuplicateDomainEntry(listOfDomains,domain_name);
-		if(isDuplicateDomainExists)
-		{
-			System.out.println("This domain is already exists for other id ..... Please enter any other domain");
-			status = false;
-			statusMessage = "This domain is already exists for other id..... Please enter any other domain";
-
-			//			mav.addObject("domain", domain);
-			//			mav.addObject("status",status);
-			//			mav.addObject("statusMessage", statusMessage);
-
+			Domain domainobj = domainService.get(domain.getId());
+			domainobj.setTags(domain.getTags());
+			//domainobj.setStatus("ACTIVE");
+			domain.setStatus(domainobj.getStatus());
+//			status = domainService.save(domain);
+			domainService.save(domain);
+			data.put("statusMessage", statusMessage);
+			statusMessage="Tag is updated successfully";
 			data.put("domain", domain);
 			data.put("status", status);
 			data.put("statusMessage", statusMessage);
-
+			return new ResponseEntity<Map<String, Object>>(data,HttpStatus.OK);
 
 		}
 
-		else
-		{
 
-			//	boolean status = false;
-
-			System.out.println("New Domain name:"+domain.getName());
+		else if (!domainService.isExistsDomain(domain.getName().trim()))
+		{	
+			//System.out.println("------>  ------> New Domain name:"+domain.getName());
 			Domain domainobj = domainService.get(domain.getId());
-			domain.setTags(domainobj.getTags());
+			domainobj.setName(domain.getName().trim());
+//			domainobj.setTags(domain.getTags());
+//			domainobj.setStatus("ACTIVE");
 			domain.setStatus(domainobj.getStatus());
-			status = domainService.save(domain);
+			status= domainService.save(domain);
+			
+			statusMessage="Domain is updated successfully";
+			data.put("domain", domain);
+			data.put("status", status);
+			data.put("statusMessage", statusMessage);
+			return new ResponseEntity<Map<String, Object>>(data,HttpStatus.OK);
+		}
 
-			if(status)
-			{
-				status = true;
-				statusMessage = "Domain is updated successfully!!!";
-
-				//				mav.addObject("domain", domain);
-				//				mav.addObject("status",status);
-				//				mav.addObject("statusMessage", statusMessage);
-
+		else  {
+			//System.out.println("------------------------- I am here----");
+			Domain domainobj = domainService.get(domain.getId());
+			if(domainService.isExistsDomain(domain.getName().trim())) {
+				domainobj.setStatus("ACTIVE");
+				status=true;
+				statusMessage="Domain is duplicate";
 				data.put("domain", domain);
 				data.put("status", status);
 				data.put("statusMessage", statusMessage);
+				
 			}
-
-			else
-			{
+			if(domainobj.getTags().equals(domain.getTags())) {
+				//System.out.println("-------i AM HERE-----");
 				status = false;
-				statusMessage = "Something went wrong.... Please try again later!!!";
-
-				//				mav.addObject("domain", domain);
-				//				mav.addObject("status",status);
-				//				mav.addObject("statusMessage", statusMessage);
+				statusMessage = "This domain is already exists ...... Please enter any other domain";
 
 				data.put("domain", domain);
+				domain.setStatus("ACTIVE");
 				data.put("status", status);
 				data.put("statusMessage", statusMessage);
+				//statusMessage="Both domain and Tag is already present in database";
 			}
 
+			else if(!(domainobj.getTags().equals(domain.getTags()))) {
+				domainobj.setTags(domain.getTags());
+				status=domainService.save(domain);
+				statusMessage="kindly Update the tag first and refresh the page";
+			}
+			status=false;
+			data.put("status", status);
+			data.put("statusMessage", statusMessage);
+			return new ResponseEntity<Map<String, Object>>(data,HttpStatus.OK);
 
 		}
-		//		return mav;
-		return new ResponseEntity<Map<String, Object>>(data,HttpStatus.OK);
+		//		else {
+		//			statusMessage="Something went wrong";
+		//			status=false;
+		//			data.put("status", status);
+		//			data.put("statusMessage", statusMessage);
+		//			return new ResponseEntity<Map<String, Object>>(data,HttpStatus.OK);
+		//		}
+
+		//				//boolean status = true;
+		//
+		//				System.out.println("------>  ------> New Domain name:"+domain.getName());
+		//				Domain domainobj = domainService.get(domain.getId());
+		//				domainobj.setTags(domain.getTags());
+		//				domainobj.setStatus(domain.getStatus());
+		//				domainobj.setName(domain.getName());
+		//				status = domainService.save(domainobj);
+		//				data.put("statusMessage", statusMessage);
+		//
+		//
+		//				if(status) {
+		//					status= true;
+		//					statusMessage= "Tag is Updated Successfully";
+		//					data.put("domain", domain);
+		//					data.put("status", status);
+		//					data.put("statusMessage", statusMessage);
+		//
+		//				}
+		//
+		//				if(status)
+		//				{
+		//					status = true;
+		//					statusMessage = "Domain is updated successfully!!!";
+		//
+		//					//				mav.addObject("domain", domain);
+		//					//				mav.addObject("status",status);
+		//	0				//				mav.addObject("statusMessage", statusMessage);
+		//
+		//					data.put("domain", domain);
+		//					data.put("status", status);
+		//					data.put("statusMessage", statusMessage);
+		//				}
+		//
+		//				else
+		//				{
+		//					status = false;
+		//					statusMessage = "Something went wrong.... Please try again later!!!";
+		//
+		//					//				mav.addObject("domain", domain);
+		//					//				mav.addObject("status",status);
+		//					//				mav.addObject("statusMessage", statusMessage);
+		//
+		//					data.put("domain", domain);
+		//					data.put("status", status);
+		//					data.put("statusMessage", statusMessage);
+		//				}
+		//
+		//			}
+		//		}
+		//
+		//		//		return mav;
+		//		return new ResponseEntity<Map<String, Object>>(data,HttpStatus.OK);
 	}
+
 
 
 	// Check Domain Dupliacte Entry
@@ -371,7 +531,7 @@ public class DomianController {
 		boolean isHavingSubdomain = false;
 		isHavingSubdomain = subdomainService.getSubdomainsByDomainId(id);
 		if(!isHavingSubdomain) 
-		{
+		{  
 			try
 			{
 				int flag = 0;

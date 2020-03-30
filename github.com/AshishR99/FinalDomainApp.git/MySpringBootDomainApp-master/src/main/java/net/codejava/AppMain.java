@@ -1,39 +1,25 @@
 package net.codejava;
 
-import java.io.IOException;
+
+//FILE PATH DIRECTORY NAME : E:\GIT DomainApp
+
 import java.util.Arrays;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.springframework.web.cors.*;
-
-
 import net.codejava.entities.Userlogin;
-import net.codejava.repositories.UserloginRepository;
-import net.codejava.services.DomainService;
+import net.codejava.payload.SignUpPayload;
 import net.codejava.services.UserloginService;
 
 
@@ -67,15 +53,20 @@ public class AppMain<CorsConfiguration> {
         return source;
     }
 	
+	
+	  @Bean PasswordEncoder getEncoder() { return new BCryptPasswordEncoder(); }
+	 
 
 	
 	@Bean
     public CommandLineRunner demoData(UserloginService userloginService) {
         return args -> 
         { 
-        	userloginService.save(new Userlogin(1,"admin@gmail.com","admin","admin@123","8785476866",1,"NA","",1));
+        	userloginService.save(new SignUpPayload(1,"admin@gmail.com","admin","admin","8785476866",1,"NA","",1));
         };
     }
 	
 	
 }
+
+

@@ -11,6 +11,7 @@ import net.codejava.entities.Subdomain;
 
 public interface DomainRepository extends JpaRepository<Domain, Integer>{
 
+	public Boolean existsByname(String name);
 	
-	
+	public Boolean existsBytags(String tagName);
 }

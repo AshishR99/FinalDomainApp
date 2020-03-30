@@ -289,8 +289,6 @@ public class ChartController {
 			
 //			chartService.countContentByExtension(1);
 			
-			
-			
 			return new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
 		}
 	 

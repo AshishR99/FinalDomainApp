@@ -19,4 +19,8 @@ public interface ContentUserloginSubdomainDomainRepository extends JpaRepository
 	@Query(value = "select content.*,userlogin.user_name,subdomain.subdomain_name,domain.name from content left join userlogin on userlogin.user_id = content.fk_user_id left join subdomain on subdomain.subdomain_id = content.fk_subdomain_id left join domain on domain.id = content.fk_domain_id where content.fk_user_id = ?1",nativeQuery = true)
 	public List<ContentUserloginSubdomainDomainPayload> getContentsByUserId(int fk_user_id);
 	
+	
+	@Query(value="select content.*,userlogin.user_name,subdomain.subdomain_name,domain.name from content left join userlogin on userlogin.user_id = content.fk_user_id left join subdomain on subdomain.subdomain_id = content.fk_subdomain_id left join domain on domain.id = content.fk_domain_id",nativeQuery = true)
+	public List<ContentUserloginSubdomainDomainPayload> getAllContentsOfUsers();
+	
 }

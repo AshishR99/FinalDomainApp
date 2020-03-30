@@ -12,4 +12,6 @@ public interface UserloginRoleRepository extends JpaRepository<UserloginRolePayl
 	@Query(value = "SELECT userlogin.*,role.role_desc FROM   userlogin LEFT JOIN role ON userlogin.fk_role_id = role.role_id;",nativeQuery = true)
 	public List<UserloginRolePayload> findAllUsersWithRoleDesc();
 
+	
+
 }

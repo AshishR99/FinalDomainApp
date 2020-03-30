@@ -32,11 +32,13 @@ import net.codejava.services.SubdomainService;
 
 @RestController
 @CrossOrigin("*")
+
+
 public class SubdomainController {
 
 	boolean status = false;
 	String statusMessage = "";
-	private static final Logger logger=Logger.getLogger(UserController.class);
+	private static final Logger logger=Logger.getLogger(SubdomainController.class);
 
 	@Autowired
 	private DomainService domainService;
@@ -52,6 +54,8 @@ public class SubdomainController {
 	//Sub-domain handler methods
 
 	//Get subdomains details using domain id:   testing purpose...... not used ....
+	
+	
 	@RequestMapping("/api/subdomain/getSubDomainByDomainId/{fk_domain_id}")
 	public ResponseEntity<?> searchSubDomainUsingDomainId(@PathVariable(name = "fk_domain_id")int domain_id)
 	{
@@ -119,9 +123,9 @@ public class SubdomainController {
 	public ResponseEntity<?> saveSubDomain(@RequestBody Subdomain subdomain) 
 	{
 
-		ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
+		//ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
 		Map<String, Object> data = new HashMap<String,Object>();
-
+try {
 		int fk_domain_id = subdomain.getFK_domain_id();
 		//String fk_domain_name = subdomain.getFK_domain_name();
 		String subdomain_name= subdomain.getSubdomainName();
@@ -132,9 +136,9 @@ public class SubdomainController {
 
 		if(isDuplicateSubdomainEntry)
 		{
-			System.out.println("This Subdomain is already exists ..... plz enter any other Subdomain");
+			//System.out.println("This Subdomain is already exists ..... please enter any other Subdomain");
 			status = false;
-			statusMessage = "This Subdomain is already exists ..... plz enter any other Subdomain";
+			statusMessage = "This Subdomain is already exists ..... please enter any other Subdomain";
 
 //			mav.addObject("subdomain", subdomain);
 //			mav.addObject("status",status);
@@ -150,6 +154,8 @@ public class SubdomainController {
 			status = subdomainService.save(subdomain);
 			if(status)
 			{
+				logger.info("SubDomain Saved Successfully1");
+
 				status = true;
 				statusMessage="Subdomain Saved successfully!!!";
 
@@ -177,6 +183,24 @@ public class SubdomainController {
 				data.put("statusMessage", statusMessage);
 
 			}
+		}
+}
+		
+		catch(Exception ex)
+		{
+			Subdomain Subdomain = new Subdomain();
+			status = false;
+			logger.error("SubDomain Saved Successfully2");
+			statusMessage = "SubDomain not added!!!!!!";
+
+			//			mav.addObject("domain", domain);
+			//			mav.addObject("status", status);
+			//			mav.addObject("statusMessage", statusMessage);
+
+			data.put("Subdomain", Subdomain);
+			data.put("status", status);
+			data.put("statusMessage", statusMessage);
+
 		}
 
 //		return mav;
@@ -206,7 +230,7 @@ public class SubdomainController {
 		{
 			System.out.println("This Subdomain is already exists against other id ..... plz enter any other Subdomain");
 			status = false;
-			statusMessage = "This Subdomain is already exists ..... plz enter any other Subdomain";
+			statusMessage = "This Subdomain is already exists ..... please enter any other Subdomain";
 
 //			mav.addObject("subdomain", subdomain);
 //			mav.addObject("status",status);
@@ -222,6 +246,7 @@ public class SubdomainController {
 			status = subdomainService.save(subdomain);
 			if(status)
 			{
+				logger.info("Domain Updated Successfully");
 				status = true;
 				statusMessage="Subdomain updated successfully!!!";
 

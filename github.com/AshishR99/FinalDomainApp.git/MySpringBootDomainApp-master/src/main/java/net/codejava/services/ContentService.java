@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import net.codejava.entities.Content;
 import net.codejava.entities.Userlogin;
 import net.codejava.payload.ContentUserloginSubdomainDomainPayload;
+import net.codejava.payload.UserloginRolePayload;
 import net.codejava.repositories.ChartRepository;
 import net.codejava.repositories.ContentRepository;
 import net.codejava.repositories.ContentUserloginSubdomainDomainRepository;
@@ -52,6 +53,11 @@ public class ContentService {
 	private ChartRepository chartRepo;
 
 	public List<Content>listAll() {
+		return contentRepo.findAll();
+	}
+	
+	public List<Content> listAllContents() {
+
 		return contentRepo.findAll();
 	}
 
@@ -215,8 +221,15 @@ public class ContentService {
 		return content;
 	}
 	
+	//Changed by me
 
+	public List<ContentUserloginSubdomainDomainPayload> findAllContents() {
+		// TODO Auto-generated method stub
+		return contentUserloginSubdomainDomainRepo.getAllContentsOfUsers();
+	}
+	
 
+	
 	
 
 }
